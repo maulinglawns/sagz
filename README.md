@@ -27,3 +27,10 @@ OPTIONS:
   
 ```
 
+---
+
+<h2>Example</h2>
+
+*Compress files in `/home/magnus/slask/logs/` with extension `.log` older than 100 days:*
+
+```$ sagz -p /home/magnus/slask/logs/ -e .log -a 100d```
