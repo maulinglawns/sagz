@@ -34,3 +34,19 @@ OPTIONS:
 *Compress files in `/home/magnus/slask/logs/` with extension `.log` older than 100 days:*
 
 ```$ sagz -p /home/magnus/slask/logs/ -e .log -a 100d```
+
+<h2>Video example (Debian 9)</h2>
+https://asciinema.org/a/UrZ3HVelCRpPn43hdy2tW7vue
+
+<h2>Notes</h2>
+
+Unlike GNU gzip, `sagz` does not (at least not **yet**) preserve timestamps from the original on the compressed files.<br>
+Using `sagz` is similar to running:
+
+```find <PATH> -maxdepth 1 -type f -name "*.log" -mtime +100 -exec gzip "{}" \+```
+
+On a GNU/Linux OS.
+
+Hopefully, `sagz` is somewhat easier than remembering all those switches (and knowing the difference between `-mtime` and `-mmin` etc.). And, since it is written in pure Rust without OS bindings, it works on Windows as well.
+
+Written just for fun.
