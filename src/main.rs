@@ -48,9 +48,8 @@ fn gzip(uncompressed_file: &str) -> String {
     let mut tmp_output_filename = String::from(uncompressed_file);
     // Append '.gz' to String
     tmp_output_filename.push_str(".gz");
-    // Create Path for use with set_filetime
+    // Create Path for use with set_file_times
     let gzip_path = std::path::Path::new(&tmp_output_filename);
-    println!("{:?}", gzip_path);
     // Typecast the proper output name back into &str type
     let output_filename = &tmp_output_filename;
     let output: Box<std::io::Write> = Box::new(std::fs::File::create(output_filename)
@@ -60,6 +59,9 @@ fn gzip(uncompressed_file: &str) -> String {
     let mut encoder = gzip::Encoder::new(output).unwrap();
     std::io::copy(&mut input, &mut encoder).expect("Encoding GZIP stream failed");
     encoder.finish().into_result().unwrap();
+    
+    // Update the timestamps to be the same as in the original file
+    filetime::set_file_times(&gzip_path, atime, mtime);
     
     return output_filename.to_owned();
 }
