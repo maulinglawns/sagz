@@ -37,10 +37,6 @@ fn gzip(uncompressed_file: &str) -> String {
     // Save original file's timestamps here
     let mtime = FileTime::from_last_modification_time(&metadata);
     let atime = FileTime::from_last_access_time(&metadata);
-    // Create Path
-    let gzip_path = std::path::Path::new(input_filename);
-    println!("{:?}", gzip_path);
-    
     
     let input: Box<std::io::Read> = Box::new(std::fs::File::open(input_filename)
                                         .expect(&format!("Can't open file: {}", input_filename)));
@@ -52,6 +48,9 @@ fn gzip(uncompressed_file: &str) -> String {
     let mut tmp_output_filename = String::from(uncompressed_file);
     // Append '.gz' to String
     tmp_output_filename.push_str(".gz");
+    // Create Path for use with set_filetime
+    let gzip_path = std::path::Path::new(&tmp_output_filename);
+    println!("{:?}", gzip_path);
     // Typecast the proper output name back into &str type
     let output_filename = &tmp_output_filename;
     let output: Box<std::io::Write> = Box::new(std::fs::File::create(output_filename)
