@@ -1,8 +1,10 @@
 extern crate clap;
 extern crate libflate;
+extern crate filetime;
 
 use clap::{App, Arg};
 use libflate::gzip;
+use filetime::FileTime;
 
 fn read() -> String {
     //*
@@ -29,6 +31,17 @@ fn gzip(uncompressed_file: &str) -> String {
     
     // Input file
     let input_filename = uncompressed_file;
+    
+    // Get metadata
+    let metadata = std::fs::metadata(input_filename).unwrap();
+    // Save original file's timestamps here
+    let mtime = FileTime::from_last_modification_time(&metadata);
+    let atime = FileTime::from_last_access_time(&metadata);
+    // Create Path
+    let gzip_path = std::path::Path::new(input_filename);
+    println!("{:?}", gzip_path);
+    
+    
     let input: Box<std::io::Read> = Box::new(std::fs::File::open(input_filename)
                                         .expect(&format!("Can't open file: {}", input_filename)));
 

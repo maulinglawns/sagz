@@ -6,3 +6,4 @@ authors = ["Magnus Wallin <magnuswallin@tutanota.com>"]
 [dependencies]
 clap = "2.32.0"
 libflate = "0.1.16"
+filetime = "0.2.1"
