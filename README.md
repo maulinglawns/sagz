@@ -52,10 +52,12 @@ OPTIONS:
 
 *Compress files in `/home/magnus/slask/logs/` with extension `.log` older than 100 days:*
 
-```$ sagz -p /home/magnus/slask/logs/ -e .log -a 100d```
-
+```
+$ sagz -p /home/magnus/slask/logs/ -e .log -a 100d
+```
 
 <h2>Notes</h2>
+
 Using `sagz` is similar to running:
 
 ```find <PATH> -maxdepth 1 -type f -name "*.log" -mtime +100 -exec gzip "{}" \+```
