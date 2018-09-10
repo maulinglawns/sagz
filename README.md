@@ -4,14 +4,32 @@ search and gzip
 A simple gzip utility written in pure Rust
 
 ```
+ 
+EXAMPLES:
+    sagz -p ./ -a 10m -e .log
+    Locate and gzip files in current directory older than 10 minutes,
+    with extension .log
+    sagz -p /home/magnus/slask/ -a 100d -d
+    Locate all files (no -e switch) in /home/magnus/slask/, older than 100 days,
+    do not gzip (-d flag), just print which files would be processed.
+    
+NOTES:
+    When running without extension, you will be prompted as an extra
+    precaution, since this means you are processing all files in the
+    path.
+    
+    Like GNU gzip, timestamps are preserved upon creating gzip.
+    If you want to disable this, use the -n (--nongnu) flag.
+
 USAGE:
     sagz [FLAGS] [OPTIONS] --age <TIME> --path <PATH>
 
 FLAGS:
     -d, --dryrun     Don't compress. Just print which files
-                     would be compressed, and their age in seconds
+                     would be compressed.
     -h, --help       Prints help information
     -k, --keep       Don't delete the original file.
+    -n, --nongnu     Don't preserve timestamps.
     -V, --version    Prints version information
 
 OPTIONS:
@@ -24,7 +42,8 @@ OPTIONS:
                          If not supplied, work on ALL files.
     -p, --path <PATH>    Operate on files in path <PATH>.
                          Examples: ./, /home/backups
-  
+
+ 
 ```
 
 ---
@@ -35,12 +54,8 @@ OPTIONS:
 
 ```$ sagz -p /home/magnus/slask/logs/ -e .log -a 100d```
 
-<h2>Video example (Debian 9)</h2>
-https://asciinema.org/a/UrZ3HVelCRpPn43hdy2tW7vue
 
 <h2>Notes</h2>
-
-Unlike GNU gzip, `sagz` does not (at least not **yet**) preserve timestamps from the original on the compressed files.<br>
 Using `sagz` is similar to running:
 
 ```find <PATH> -maxdepth 1 -type f -name "*.log" -mtime +100 -exec gzip "{}" \+```

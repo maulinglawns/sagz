@@ -20,11 +20,14 @@ fn read() -> String {
     return String::from(user_input);
 }
 
-fn gzip(uncompressed_file: &str) -> String {
+fn gzip(uncompressed_file: &str, gnu: bool) -> String {
     //*
     // Try to create gzip archive from uncompressed_file
     // See:
     // https://github.com/sile/libflate/blob/master/examples/flate.rs
+    // Arguments:
+    // uncompressed_file, Filename as &str
+    // gnu, a bool. If true, save timestamp from original file.
     // Return values:
     // The name of the compressed file as String
     //*
@@ -60,8 +63,10 @@ fn gzip(uncompressed_file: &str) -> String {
     std::io::copy(&mut input, &mut encoder).expect("Encoding GZIP stream failed");
     encoder.finish().into_result().unwrap();
     
-    // Update the timestamps to be the same as in the original file
-    filetime::set_file_times(&gzip_path, atime, mtime);
+    if gnu {
+        // Update the timestamps to be the same as in the original file
+        filetime::set_file_times(&gzip_path, atime, mtime).unwrap();
+    }
     
     return output_filename.to_owned();
 }
@@ -103,7 +108,7 @@ fn main() {
     static INFO: &'static str = "
     sagz: search and gzip
     
-    EXAMPLES:
+EXAMPLES:
     sagz -p ./ -a 10m -e .log
     Locate and gzip files in current directory older than 10 minutes,
     with extension .log
@@ -111,16 +116,17 @@ fn main() {
     Locate all files (no -e switch) in /home/magnus/slask/, older than 100 days,
     do not gzip (-d flag), just print which files would be processed.
     
-    NOTES:
+NOTES:
     When running without extension, you will be prompted as an extra
     precaution, since this means you are processing all files in the
     path.
     
-    Unlike GNU gzip, timestamps are not preserved upon creating gzip.";
+    Like GNU gzip, timestamps are preserved upon creating gzip.
+    If you want to disable this, use the -n (--nongnu) flag.";
     
     // Configure arguments
     let matches = App::new("sagz")
-                      .version("1.0")
+                      .version("0.1.1")
                       .author("Magnus Wallin <magnuswallin@tutanota.com>")
                       .about(INFO)
                       .arg(Arg::with_name("age")
@@ -153,12 +159,19 @@ fn main() {
                            .short("d")
                            .long("dryrun")
                            .help("Don't compress. Just print which files\n\
-                           would be compressed, and their age in seconds"))
+                           would be compressed."))
                       .arg(Arg::with_name("k")
                            .short("k")
                            .long("keep")
                            .help("Don't delete the original file."))
+                      .arg(Arg::with_name("n")
+                           .short("n")
+                           .long("nongnu")
+                           .help("Don't preserve timestamps."))
                       .get_matches();
+
+    // As default, preserve timestamps from original file
+    let mut gnu = true;
 
     // Parse arguments
     let age = matches.value_of("age").unwrap();
@@ -166,6 +179,9 @@ fn main() {
     let temp_path = matches.value_of("path").unwrap();
     let dryrun = matches.occurrences_of("d");
     let keep = matches.occurrences_of("k");
+    if matches.occurrences_of("n") == 1 {
+        gnu = false;
+    }
     
     // Sanity check the age input from user
     let age_in_seconds = validate_age(&age).unwrap();
@@ -223,7 +239,7 @@ fn main() {
                     println!("Matched file: {}", file_name);
                     continue;
                 }
-                gzip(&file_name);
+                gzip(&file_name, gnu);
                 // Do not delete if -k flag is used
                 if keep != 1 {
                     std::fs::remove_file(&file_name).unwrap();

@@ -1,6 +1,6 @@
 [package]
 name = "sagz"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Magnus Wallin <magnuswallin@tutanota.com>"]
 
 [dependencies]
