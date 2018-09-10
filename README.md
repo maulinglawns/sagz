@@ -48,13 +48,17 @@ OPTIONS:
 
 ---
 
-<h2>Example</h2>
+<h2>Examples</h2>
 
 *Compress files in `/home/magnus/slask/logs/` with extension `.log` older than 100 days:*
 
 ```
 $ sagz -p /home/magnus/slask/logs/ -e .log -a 100d
 ```
+
+<h5>Video example (on Debian 9)</h5>
+
+https://asciinema.org/a/HWQmLIqw44QkVqkWDkcqkewvR
 
 <h2>Notes</h2>
 
