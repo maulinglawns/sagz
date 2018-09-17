@@ -1,0 +1,7 @@
+This directory contains precompiled binaries.
+
+They are placed in subdirectories named after the -
+operating system they are compiled for.
+
+If you are even the slightest bit paranoid, 
+check the source code and compile yourself!
